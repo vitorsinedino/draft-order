@@ -1,0 +1,29 @@
+{% comment %} /extensions/your-extension-name/blocks/list-draft-orders-block.liquid {% endcomment %}
+
+{% render 'customer-data' %}
+
+<div id="draft-order-list" class="draft-order-list" 
+  data-shop="{{ shop.permanent_domain }}"
+  data-customer-id="{{ customer.id }}">
+  <h2>Your Active Orders</h2>
+  <div id="draft-orders-loading" class="draft-orders-loading">Loading your draft orders...</div>
+  <div id="draft-orders-container" class="draft-orders-container" style="display: none;"></div>
+  <div id="draft-orders-error" class="draft-orders-error" style="display: none;"></div>
+  <div id="no-draft-orders" class="no-draft-orders" style="display: none;">
+    You don't have any draft orders yet.
+  </div>
+  <div class="draft-orders-footer">
+    <button id="refresh-draft-orders-btn" class="refresh-draft-orders-btn">Refresh active Orders</button>
+  </div>
+  <div id="debug-output" class="debug-output" style="display: none;"></div>
+</div>
+
+{% schema %}
+{
+  "name": "List Draft Orders",
+  "target": "section",
+  "stylesheet": "app.css",
+  "javascript": "list-draft-orders.js",
+  "settings": []
+}
+{% endschema %}

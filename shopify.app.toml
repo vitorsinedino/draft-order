@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "c18b71e5988913e23ebd15d7fd29864a"
-application_url = "https://hood-leaving-rangers-outstanding.trycloudflare.com"
+application_url = "https://thunder-storm-mba-annual.trycloudflare.com"
 embedded = true
 name = "draft-order"
 handle = "draft-order-29"
@@ -28,15 +28,15 @@ scopes = "write_draft_orders,write_products,read_customers,read_orders,read_cart
 
 [auth]
 redirect_urls = [
-  "https://hood-leaving-rangers-outstanding.trycloudflare.com/auth/callback",
-  "https://hood-leaving-rangers-outstanding.trycloudflare.com/auth/shopify/callback",
-  "https://hood-leaving-rangers-outstanding.trycloudflare.com/api/auth/callback"
+  "https://thunder-storm-mba-annual.trycloudflare.com/auth/callback",
+  "https://thunder-storm-mba-annual.trycloudflare.com/auth/shopify/callback",
+  "https://thunder-storm-mba-annual.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
 embedded = false
 
 [app_proxy]
-url = "https://hood-leaving-rangers-outstanding.trycloudflare.com"
+url = "https://thunder-storm-mba-annual.trycloudflare.com"
 subpath = "draft-order"
 prefix = "apps"

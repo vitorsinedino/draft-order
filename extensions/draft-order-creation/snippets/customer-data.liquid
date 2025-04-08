@@ -1,0 +1,36 @@
+{% comment %}
+  This snippet helps get the customer ID by injecting it into the page for JavaScript access
+{% endcomment %}
+
+{% if customer.id %}
+    <script type="text/javascript">
+      // Create a global Shopify object if it doesn't exist
+      window.Shopify = window.Shopify || {};
+      
+      // Add customer information to the Shopify object
+      window.Shopify.customer = {
+        id: "{{ customer.id }}",
+        firstName: "{{ customer.first_name | escape }}",
+        lastName: "{{ customer.last_name | escape }}",
+        email: "{{ customer.email | escape }}",
+        phone: "{{ customer.phone | escape }}",
+        ordersCount: {{ customer.orders_count }},
+        totalSpent: "{{ customer.total_spent }}"
+      };
+      
+      // For backward compatibility
+      window.ShopifyCustomer = window.Shopify.customer;
+      
+      // Add data attribute to body for reliable access
+      document.body.setAttribute('data-customer-id', "{{ customer.id }}");
+      
+      console.log('[Customer Helper] Customer data initialized:', window.Shopify.customer);
+    </script>
+    {% else %}
+    <script type="text/javascript">
+      console.log('[Customer Helper] No customer is logged in');
+      // Initialize empty customer object for consistency
+      window.Shopify = window.Shopify || {};
+      window.Shopify.customer = null;
+    </script>
+    {% endif %}
