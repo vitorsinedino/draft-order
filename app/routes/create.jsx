@@ -21,8 +21,14 @@ export const action = async ({ request }) => {
     
     try {
       const jsonBody = JSON.parse(body);
-      const { cart } = jsonBody;
+      const { cart, remainingValue, addRemainingValueItem } = jsonBody;
       
+      // Parse and validate the remaining value
+      const remainingValueAmount = parseFloat(remainingValue);
+      const shouldAddRemainingValue = addRemainingValueItem === true && !isNaN(remainingValueAmount) && remainingValueAmount > 0;
+      
+      console.log(`[CREATE] Remaining value amount: ${remainingValueAmount}`);
+      console.log(`[CREATE] Should add remaining value item: ${shouldAddRemainingValue}`);
       console.log("[CREATE] Cart items:", cart.items?.length || 0);
       
       // Format line items
@@ -112,7 +118,20 @@ export const action = async ({ request }) => {
         }
       }
       
-      // Create the draft order
+      // *** Add the custom line item if needed ***
+      if (shouldAddRemainingValue) {
+        console.log(`[CREATE] Adding Remaining Value line item: $${remainingValueAmount.toFixed(2)}`);
+        lineItems.push({
+          title: "Remaining Value",
+          quantity: 1,
+          originalUnitPrice: remainingValueAmount.toFixed(2),
+          taxable: false
+        });
+      } else {
+        console.log("[CREATE] Not adding Remaining Value line item (zero or invalid amount)");
+      }
+      
+      // Create the draft order with the combined line items
       console.log("[CREATE] Creating draft order");
       const draftOrderInput = {
         // Use customer ID if available, otherwise just email
@@ -139,6 +158,18 @@ export const action = async ({ request }) => {
                 firstName
                 lastName
               }
+              lineItems(first: 20) {
+                edges {
+                  node {
+                    id
+                    title
+                    quantity
+                    originalUnitPrice
+                  }
+                }
+              }
+              subtotalPrice
+              totalPrice
             }
             userErrors {
               field
@@ -164,13 +195,29 @@ export const action = async ({ request }) => {
         });
       }
       
-      console.log("[CREATE] Draft order created successfully");
+      console.log("[CREATE] Draft order created successfully with line items");
+      
+      // Check if the Remaining Value line item is in the response
+      const lineItemsResponse = data.data.draftOrderCreate.draftOrder.lineItems.edges || [];
+      const hasRemainingValue = lineItemsResponse.some(edge => 
+        (edge.node.title || "").toLowerCase().includes("remaining value")
+      );
+      
+      console.log(`[CREATE] Remaining Value line item found: ${hasRemainingValue}`);
+      
+      // Return success response
       return json({
         success: true,
         draftOrderId: data.data.draftOrderCreate.draftOrder.id,
         draftOrderName: data.data.draftOrderCreate.draftOrder.name,
-        customerInfo: data.data.draftOrderCreate.draftOrder.customer
+        customerInfo: data.data.draftOrderCreate.draftOrder.customer,
+        customLineItemAdded: hasRemainingValue,
+        shouldHaveAddedRemainingValue: shouldAddRemainingValue,
+        remainingValueAmount: shouldAddRemainingValue ? remainingValueAmount.toFixed(2) : "0.00",
+        totalItems: lineItemsResponse.length,
+        totalPrice: data.data.draftOrderCreate.draftOrder.totalPrice
       });
+      
     } catch (parseError) {
       console.error("[CREATE] JSON parse error:", parseError);
       return json({ success: false, error: "Invalid JSON request" }, { status: 400 });

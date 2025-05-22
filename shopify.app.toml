@@ -1,15 +1,26 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "c18b71e5988913e23ebd15d7fd29864a"
-application_url = "https://thunder-storm-mba-annual.trycloudflare.com"
-embedded = true
 name = "draft-order"
 handle = "draft-order-29"
+application_url = "https://inspection-auckland-plastics-bugs.trycloudflare.com"
+embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
 dev_store_url = "frontend-test-sinedino.myshopify.com"
 include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_cart_transforms,read_customers,read_orders,write_draft_orders,write_products"
+
+[auth]
+redirect_urls = [
+  "https://inspection-auckland-plastics-bugs.trycloudflare.com/auth/callback",
+  "https://inspection-auckland-plastics-bugs.trycloudflare.com/auth/shopify/callback",
+  "https://inspection-auckland-plastics-bugs.trycloudflare.com/api/auth/callback"
+]
 
 [webhooks]
 api_version = "2025-01"
@@ -22,21 +33,14 @@ api_version = "2025-01"
   topics = [ "app/uninstalled" ]
   uri = "/webhooks/app/uninstalled"
 
-[access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_draft_orders,write_products,read_customers,read_orders,read_cart_transforms"
+  [[webhooks.subscriptions]]
+  topics = [ "draft_orders/create" ]
+  uri = "/webhooks/draft-orders-create"
 
-[auth]
-redirect_urls = [
-  "https://thunder-storm-mba-annual.trycloudflare.com/auth/callback",
-  "https://thunder-storm-mba-annual.trycloudflare.com/auth/shopify/callback",
-  "https://thunder-storm-mba-annual.trycloudflare.com/api/auth/callback"
-]
+[app_proxy]
+url = "https://inspection-auckland-plastics-bugs.trycloudflare.com"
+subpath = "draft-order"
+prefix = "apps"
 
 [pos]
 embedded = false
-
-[app_proxy]
-url = "https://thunder-storm-mba-annual.trycloudflare.com"
-subpath = "draft-order"
-prefix = "apps"
